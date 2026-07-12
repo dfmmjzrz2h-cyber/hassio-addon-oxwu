@@ -1,5 +1,9 @@
 FROM tsunglung/oxwu:1.0.5
 
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends zlib1g-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # === HAOS 17.3+ kernel namespace restriction workaround ===
 # Issue: After HAOS 17.3 (CVE-2026-31431 kernel patch),
 #        unprivileged user namespace clones are blocked.

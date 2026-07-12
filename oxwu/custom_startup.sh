@@ -3,6 +3,11 @@
 # See: addon Dockerfile comments for full explanation
 set -e
 
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf:/}"
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//:\/usr\/lib\/arm-linux-gnueabihf/}"
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf/}"
+export LD_LIBRARY_PATH
+
 OXWU_ALERT_INTENSITY=$(grep oxwu_alert_intensity /data/options.json 2>/dev/null | cut -d: -f2 | tr -d '" ,')
 
 [ -f /app/notify.sh ] && chmod a+x /app/notify.sh
@@ -20,7 +25,7 @@ chown -R kasm-user:kasm-user /home/kasm-user 2>/dev/null
 chmod -R u+rwX /home/kasm-user 2>/dev/null
 
 # Run as kasm-user, invoke extracted AppRun directly with --no-sandbox
-exec runuser -u kasm-user -- env APPDIR=/opt/oxwu-extracted HERE=/opt/oxwu-extracted bash -c '
+exec runuser -u kasm-user -- env APPDIR=/opt/oxwu-extracted HERE=/opt/oxwu-extracted LD_LIBRARY_PATH="$LD_LIBRARY_PATH" bash -c '
 cd /opt/oxwu-extracted
 exec ./AppRun --no-sandbox
 '
