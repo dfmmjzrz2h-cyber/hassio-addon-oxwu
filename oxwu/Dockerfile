@@ -2,7 +2,7 @@ FROM tsunglung/oxwu:1.0.5
 ARG TARGETARCH
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends jq && \
+    apt-get install -y --no-install-recommends jq zlib1g-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # === HAOS 17.3+ kernel namespace restriction workaround ===
@@ -20,7 +20,10 @@ WORKDIR /opt
 
 # 1. Extract AppImage so we can invoke AppRun directly
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-        /Applications/oxwu-linux-armv7l.AppImage --appimage-extract && \
+        curl -fsSL https://eew.earthquake.tw/releases/linux/arm64/oxwu-linux-arm64.AppImage -o /tmp/oxwu-linux-arm64.AppImage && \
+        chmod a+x /tmp/oxwu-linux-arm64.AppImage && \
+        LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu /tmp/oxwu-linux-arm64.AppImage --appimage-extract && \
+        rm -f /tmp/oxwu-linux-arm64.AppImage && \
         mv squashfs-root oxwu-extracted && \
         chmod -R a+rX oxwu-extracted && \
         rm -f /opt/oxwu-extracted/chrome-sandbox && \
