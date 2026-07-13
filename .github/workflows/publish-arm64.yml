@@ -32,6 +32,18 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract official ARM64 AppImage payload
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends squashfs-tools
+          curl -fsSL https://eew.earthquake.tw/releases/linux/arm64/oxwu-linux-arm64.AppImage \
+            -o "$RUNNER_TEMP/oxwu-linux-arm64.AppImage"
+          printf '%s  %s\n' \
+            '30f25abc9be15aef03defa241b031e697427c5e5e7d9c331eaebd31aa030c17d' \
+            "$RUNNER_TEMP/oxwu-linux-arm64.AppImage" | sha256sum --check -
+          unsquashfs -offset 197808 -d oxwu/oxwu-extracted \
+            "$RUNNER_TEMP/oxwu-linux-arm64.AppImage"
+
       - name: Build and push ARM64 image
         uses: docker/build-push-action@v6
         with:

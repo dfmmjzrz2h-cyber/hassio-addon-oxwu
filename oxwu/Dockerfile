@@ -2,7 +2,7 @@ FROM tsunglung/oxwu:1.0.5
 ARG TARGETARCH
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends jq zlib1g-dev && \
+    apt-get install -y --no-install-recommends jq && \
     rm -rf /var/lib/apt/lists/*
 
 # === HAOS 17.3+ kernel namespace restriction workaround ===
@@ -19,27 +19,14 @@ RUN apt-get update && \
 WORKDIR /opt
 
 # 1. Extract AppImage so we can invoke AppRun directly
+COPY oxwu-extracted /opt/oxwu-extracted
+
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
-        curl -fsSL https://eew.earthquake.tw/releases/linux/arm64/oxwu-linux-arm64.AppImage -o /tmp/oxwu-linux-arm64.AppImage && \
-        chmod a+x /tmp/oxwu-linux-arm64.AppImage && \
-        uname -a && \
-        uname -m && \
-        file /tmp/oxwu-linux-arm64.AppImage && \
-        ls -l /tmp/oxwu-linux-arm64.AppImage && \
-        sha256sum /tmp/oxwu-linux-arm64.AppImage && \
-        (ldd /tmp/oxwu-linux-arm64.AppImage || true) && \
-        printf 'LD_LIBRARY_PATH=%s\n' "$LD_LIBRARY_PATH" && \
-        (command -v qemu-aarch64 || true) && \
-        (command -v qemu-aarch64-static || true) && \
-        (ls -l /proc/sys/fs/binfmt_misc 2>/dev/null || true) && \
-        (cat /proc/sys/fs/binfmt_misc/qemu-aarch64 2>/dev/null || true) && \
-        LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu /tmp/oxwu-linux-arm64.AppImage --appimage-extract && \
-        rm -f /tmp/oxwu-linux-arm64.AppImage && \
-        mv squashfs-root oxwu-extracted && \
-        chmod -R a+rX oxwu-extracted && \
+        chmod -R a+rX /opt/oxwu-extracted && \
         rm -f /opt/oxwu-extracted/chrome-sandbox && \
         chown -R kasm-user:root /opt/oxwu-extracted; \
     else \
+        rm -rf /opt/oxwu-extracted && \
         /Applications/oxwu-linux-x86_64.AppImage --appimage-extract && \
         mv squashfs-root oxwu-extracted && \
         chmod -R a+rX oxwu-extracted && \
