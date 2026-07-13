@@ -1,7 +1,7 @@
 FROM tsunglung/oxwu:1.0.5
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends zlib1g-dev && \
+    apt-get install -y --no-install-recommends jq && \
     rm -rf /var/lib/apt/lists/*
 
 # === HAOS 17.3+ kernel namespace restriction workaround ===
