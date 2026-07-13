@@ -1,4 +1,5 @@
 FROM tsunglung/oxwu:1.0.5
+ARG TARGETARCH
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends jq && \
