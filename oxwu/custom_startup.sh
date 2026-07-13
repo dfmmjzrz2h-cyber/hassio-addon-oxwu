@@ -11,11 +11,11 @@ export LD_LIBRARY_PATH
 OXWU_ALERT_INTENSITY=$(grep oxwu_alert_intensity /data/options.json 2>/dev/null | cut -d: -f2 | tr -d '" ,')
 
 [ -f /app/notify.sh ] && chmod a+x /app/notify.sh
-[ -f /config/oxwu/notify.sh ] && chmod a+x /config/oxwu/notify.sh
+[ -f /config/config/oxwu/notify.sh ] && chmod a+x /config/config/oxwu/notify.sh
 
 mkdir -p /home/kasm-user/.config/oxwu/
 [ -f /tmp/settings.json ] && cp /tmp/settings.json /home/kasm-user/.config/oxwu/settings.json
-[ -f /config/oxwu/settings.json ] && cp /config/oxwu/settings.json /home/kasm-user/.config/oxwu/settings.json
+[ -f /config/config/oxwu/settings.json ] && cp /config/config/oxwu/settings.json /home/kasm-user/.config/oxwu/settings.json
 [ "x$OXWU_ALERT_INTENSITY" != "x" ] && \
     sed -i "s/\"alertIntensity\":.*/\"alertIntensity\": $OXWU_ALERT_INTENSITY,/g" \
         /home/kasm-user/.config/oxwu/settings.json

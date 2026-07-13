@@ -1,6 +1,6 @@
 name: "OX Wake Up"
 description: "OX Wake up add-on!"
-version: "1.0.8-autorun"
+version: "1.0.9-autorun"
 codenotary: tsunglung@github.com
 description: Home Assistant Add-on for OXWU, the earthquake alert
 url: https://github.com/dfmmjzrz2h-cyber/hassio-addon-oxwu

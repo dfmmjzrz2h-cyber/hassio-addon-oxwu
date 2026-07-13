@@ -54,5 +54,5 @@ jobs:
             TARGETARCH=arm64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:1.0.8-autorun
+            ${{ env.IMAGE_NAME }}:1.0.9-autorun
             ${{ env.IMAGE_NAME }}:latest-arm64
