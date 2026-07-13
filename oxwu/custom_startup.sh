@@ -3,6 +3,11 @@
 # See: addon Dockerfile comments for full explanation
 set -e
 
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf:/}"
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//:\/usr\/lib\/arm-linux-gnueabihf/}"
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf/}"
+export LD_LIBRARY_PATH
+
 OXWU_ALERT_INTENSITY=$(grep oxwu_alert_intensity /data/options.json 2>/dev/null | cut -d: -f2 | tr -d '" ,')
 
 [ -f /app/notify.sh ] && chmod a+x /app/notify.sh
@@ -22,7 +27,21 @@ chmod -R u+rwX /home/kasm-user 2>/dev/null
 # Keep Kasm's monitored custom-startup service alive unless autorun is a
 # literal JSON boolean true.
 SETTINGS_FILE=/home/kasm-user/.config/oxwu/settings.json
-if ! jq -e ".autorun == true" "$SETTINGS_FILE" >/dev/null 2>&1; then
+if ! python3 - "$SETTINGS_FILE" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as settings_file:
+        settings = json.load(settings_file)
+except (OSError, ValueError):
+    raise SystemExit(1)
+
+raise SystemExit(
+    0 if isinstance(settings, dict) and settings.get("autorun") is True else 1
+)
+PY
+then
     exec sleep infinity
 fi
 
