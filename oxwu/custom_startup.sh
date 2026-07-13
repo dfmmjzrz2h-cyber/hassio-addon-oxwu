@@ -3,6 +3,9 @@
 # See: addon Dockerfile comments for full explanation
 set -e
 
+mkdir -p /tmp
+echo "CUSTOM_STARTUP ENTERED $(date)" >> /tmp/custom_startup.log
+
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf:/}"
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH//:\/usr\/lib\/arm-linux-gnueabihf/}"
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH//\/usr\/lib\/arm-linux-gnueabihf/}"
@@ -51,6 +54,7 @@ fi
 
 # Run as kasm-user after XFCE is available. A portable mkdir lock prevents
 # concurrent startup hooks from creating duplicate OXWU processes.
+echo "ABOUT TO EXEC RUNUSER $(date)" >> /tmp/custom_startup.log
 exec runuser -u kasm-user -- env APPDIR=/opt/oxwu-extracted HERE=/opt/oxwu-extracted bash -c '
 set -eu
 
