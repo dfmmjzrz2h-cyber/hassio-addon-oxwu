@@ -22,6 +22,17 @@ WORKDIR /opt
 RUN if [ "$TARGETARCH" = "arm64" ]; then \
         curl -fsSL https://eew.earthquake.tw/releases/linux/arm64/oxwu-linux-arm64.AppImage -o /tmp/oxwu-linux-arm64.AppImage && \
         chmod a+x /tmp/oxwu-linux-arm64.AppImage && \
+        uname -a && \
+        uname -m && \
+        file /tmp/oxwu-linux-arm64.AppImage && \
+        ls -l /tmp/oxwu-linux-arm64.AppImage && \
+        sha256sum /tmp/oxwu-linux-arm64.AppImage && \
+        (ldd /tmp/oxwu-linux-arm64.AppImage || true) && \
+        printf 'LD_LIBRARY_PATH=%s\n' "$LD_LIBRARY_PATH" && \
+        (command -v qemu-aarch64 || true) && \
+        (command -v qemu-aarch64-static || true) && \
+        (ls -l /proc/sys/fs/binfmt_misc 2>/dev/null || true) && \
+        (cat /proc/sys/fs/binfmt_misc/qemu-aarch64 2>/dev/null || true) && \
         LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu /tmp/oxwu-linux-arm64.AppImage --appimage-extract && \
         rm -f /tmp/oxwu-linux-arm64.AppImage && \
         mv squashfs-root oxwu-extracted && \
